@@ -1,0 +1,77 @@
+Session info generated on: 2026-10-07 16:28:40.402711
+
+R version 4.4.2 (2024-10-31 ucrt)
+Platform: x86_64-w64-mingw32/x64
+Running under: Windows 11 x64 (build 26200)
+
+Matrix products: default
+
+
+locale:
+[1] LC_COLLATE=English_United States.utf8  LC_CTYPE=English_United States.utf8    LC_MONETARY=English_United States.utf8
+[4] LC_NUMERIC=C                           LC_TIME=English_United States.utf8    
+
+time zone: America/Los_Angeles
+tzcode source: internal
+
+attached base packages:
+[1] stats4    stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] vegan_2.7-5                 permute_0.9-10              SingleR_2.8.0               harmony_1.2.3              
+ [5] Rcpp_1.0.14                 pwr_1.3-0                   dittoSeq_1.18.0             scales_1.4.0               
+ [9] ggpubr_0.6.0                FSA_0.10.0                  rlang_1.1.6                 DESeq2_1.46.0              
+[13] SummarizedExperiment_1.36.0 Biobase_2.66.0              MatrixGenerics_1.18.1       matrixStats_1.5.0          
+[17] GenomicRanges_1.58.0        GenomeInfoDb_1.42.3         IRanges_2.40.1              S4Vectors_0.44.0           
+[21] BiocGenerics_0.52.0         colorspace_2.1-1            beepr_2.0                   gridExtra_2.3              
+[25] RColorBrewer_1.1-3          spacexr_2.2.1               paletteer_1.6.0             scCustomize_3.0.1          
+[29] EnhancedVolcano_1.24.0      ggrepel_0.9.6               future_1.49.0               lubridate_1.9.4            
+[33] forcats_1.0.0               stringr_1.5.1               purrr_1.0.4                 readr_2.1.5                
+[37] tibble_3.2.1                tidyverse_2.0.0             data.table_1.17.0           broom_1.0.8                
+[41] emmeans_1.11.1              conflicted_1.2.0            tidyr_1.3.1                 Matrix_1.7-3               
+[45] patchwork_1.3.0             here_1.0.1                  ggplot2_4.0.3               dplyr_1.1.4                
+[49] Seurat_5.5.1                SeuratObject_5.4.0          sp_2.2-0                   
+
+loaded via a namespace (and not attached):
+  [1] ggtext_0.1.2                spatstat.sparse_3.1-0       sf_1.0-20                   httr_1.4.7                 
+  [5] doParallel_1.0.17           tools_4.4.2                 sctransform_0.4.1           backports_1.5.0            
+  [9] utf8_1.2.5                  R6_2.6.1                    lazyeval_0.2.2              uwot_0.2.3                 
+ [13] mgcv_1.9-3                  litedown_0.11               withr_3.0.2                 progressr_0.15.1           
+ [17] cli_3.6.5                   textshaping_1.0.1           spatstat.explore_3.4-2      fastDummies_1.7.5          
+ [21] sandwich_3.1-1              labeling_0.4.3              mvtnorm_1.3-3               S7_0.2.2                   
+ [25] spatstat.data_3.1-6         proxy_0.4-27                ggridges_0.5.6              pbapply_1.7-2              
+ [29] commonmark_2.0.0            systemfonts_1.2.3           dichromat_2.0-0.1           parallelly_1.44.0          
+ [33] rstudioapi_0.17.1           generics_0.1.4              shape_1.4.6.1               ica_1.0-3                  
+ [37] spatstat.random_3.3-3       vroom_1.6.5                 car_3.1-3                   ggbeeswarm_0.7.2           
+ [41] abind_1.4-8                 lifecycle_1.0.4             multcomp_1.4-28             snakecase_0.11.1           
+ [45] carData_3.0-5               glmGamPoi_1.18.0            SparseArray_1.6.2           Rtsne_0.17                 
+ [49] grid_4.4.2                  promises_1.3.2              crayon_1.5.3                miniUI_0.1.2               
+ [53] lattice_0.22-7              beachmat_2.22.0             cowplot_1.1.3               pillar_1.10.2              
+ [57] estimability_1.5.1          future.apply_1.11.3         codetools_0.2-20            glue_1.8.0                 
+ [61] spatstat.univar_3.1-3       vctrs_0.6.5                 png_0.1-8                   spam_2.11-1                
+ [65] gtable_0.3.6                rematch2_2.1.2              cachem_1.1.0                xfun_0.60                  
+ [69] S4Arrays_1.6.0              mime_0.13                   coda_0.19-4.1               survival_3.8-3             
+ [73] audio_0.1-11                SingleCellExperiment_1.28.1 pheatmap_1.0.12             iterators_1.0.14           
+ [77] units_0.8-7                 fitdistrplus_1.2-2          TH.data_1.1-3               ROCR_1.0-11                
+ [81] nlme_3.1-168                bit64_4.6.0-1               RcppAnnoy_0.0.22            rprojroot_2.0.4            
+ [85] irlba_2.3.5.1               vipor_0.4.7                 KernSmooth_2.23-26          DBI_1.2.3                  
+ [89] ggrastr_1.0.2               tidyselect_1.2.1            bit_4.6.0                   compiler_4.4.2             
+ [93] BiocNeighbors_2.0.1         xml2_1.3.8                  DelayedArray_0.32.0         plotly_4.10.4              
+ [97] classInt_0.4-11             lmtest_0.9-40               digest_0.6.37               goftest_1.2-3              
+[101] spatstat.utils_3.1-3        RhpcBLASctl_0.23-42         XVector_0.46.0              htmltools_0.5.8.1          
+[105] pkgconfig_2.0.3             sparseMatrixStats_1.18.0    dunn.test_1.3.6             fastmap_1.2.0              
+[109] GlobalOptions_0.1.2         htmlwidgets_1.6.4           UCSC.utils_1.2.0            DelayedMatrixStats_1.28.1  
+[113] shiny_1.10.0                farver_2.1.2                zoo_1.8-14                  jsonlite_2.0.0             
+[117] BiocParallel_1.40.2         BiocSingular_1.22.0         magrittr_2.0.3              Formula_1.2-5              
+[121] GenomeInfoDbData_1.2.13     dotCall64_1.2               reticulate_1.42.0           stringi_1.8.7              
+[125] zlibbioc_1.52.0             MASS_7.3-65                 plyr_1.8.9                  parallel_4.4.2             
+[129] listenv_0.9.1               deldir_2.0-4                splines_4.4.2               gridtext_0.1.6             
+[133] tensor_1.5                  hms_1.1.3                   circlize_0.4.16             locfit_1.5-9.12            
+[137] igraph_2.1.4                spatstat.geom_3.3-6         ggsignif_0.6.4              markdown_2.0               
+[141] RcppHNSW_0.6.0              ScaledMatrix_1.14.0         reshape2_1.4.4              ggprism_1.0.5              
+[145] tzdb_0.5.0                  foreach_1.5.2               httpuv_1.6.15               RANN_2.6.2                 
+[149] polyclip_1.10-7             scattermore_1.2             rsvd_1.0.5                  janitor_2.2.1              
+[153] xtable_1.8-4                e1071_1.7-16                RSpectra_0.16-2             rstatix_0.7.2              
+[157] later_1.4.2                 class_7.3-23                viridisLite_0.4.2           ragg_1.4.0                 
+[161] memoise_2.0.1               beeswarm_0.4.0              cluster_2.1.8.1             timechange_0.3.0           
+[165] globals_0.18.0             
