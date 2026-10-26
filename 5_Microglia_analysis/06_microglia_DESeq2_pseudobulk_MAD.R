@@ -4,12 +4,14 @@
 #
 # Xenium analysis of microglia in human hippocampus samples
 # Using MegaData_v8
-# Original analysis: Larissa Kraus (2026)
+# Uses datM_clean_v8_annotated.rds generated in Script 01_microglia and 
+# megaData_v8_annotated_final.rds from GEO
 #
-# Patient-level microglia pseudobulk DESeq2 and MAD filtering
-
-# DESeq2 approach adapted from the ExN pseudobulk workflow.
+# Performs Patient-level microglia pseudobulk DESeq2 and MAD filtering
+#
 # MAD filtering approach adapted from Adi Swaro (July 2025).
+# Original analysis: Rachel J. Boyd (2026)
+# Code cleanup and standardization: Larissa Kraus (October 2026)
 
 
 ### 0) Setup -------------------------------------------------------------------
@@ -28,7 +30,11 @@ suppressPackageStartupMessages({
 })
 
 ### PACKAGE CONFLICTS
-conflicted::conflicts_prefer(dplyr::filter, dplyr::select, dplyr::rename, dplyr::lag, dplyr::count, dplyr::first)
+conflicted::conflicts_prefer(dplyr::filter, 
+                             dplyr::select, 
+                             dplyr::rename, 
+                             dplyr::lag, dplyr::count, 
+                             dplyr::first)
 
 
 # Memory for large objects (adjust if needed)

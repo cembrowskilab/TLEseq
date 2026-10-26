@@ -3,7 +3,7 @@
 # 01_microglia_subsetting_clustering_annotation.R
 #
 # Xenium analysis of microglia in human hippocampus samples
-# Using MegaData_v8
+# Using megaData_v8_annotated_final.rds
 # Original analysis: Rachel J. Boyd (2026)
 # Code cleanup and standardization: Larissa Kraus (October 2026)
 #
@@ -21,7 +21,6 @@ suppressPackageStartupMessages({
         library(purrr)
         library(ggplot2)
         library(patchwork)
-        library(harmony)
         library(clustree)
 })
 
@@ -67,36 +66,24 @@ prep_FindMarkers <- function(obj, num_slices = length(obj@assays$SCT@SCTModel.li
 
 ### 2) User-editable paths and load inputs -------------------------------------
 # Set input/output paths before running. Objects already in the session are reused.
+NA_character_
 cfg <- list(
-        megadata_rds = NA_character_,
-        region_metadata_rds = NA_character_,
-        microglia_rds = NA_character_,
-        markers_csv = NA_character_,
-        humica_xlsx = NA_character_,
-        output_dir_data = NA_character_,
-        output_dir_plots = NA_character_)
+        megadata_rds = 'Z:/CembrowskiLab/Larissa/1. Projects/Human brain tissue/3_Xenium/1. Human_samples_analysis/Analysis/data/FINAL-TO-USE/MegaData_v8_annotated_final.rds',
+        region_metadata_rds = 'Z:/CembrowskiLab/Larissa/1. Projects/Human brain tissue/3_Xenium/1. Human_samples_analysis/Analysis/data/FINAL-TO-USE/megadata_metadata_md_v8.rds',
+        microglia_rds =  'Z:/CembrowskiLab/Larissa/1. Projects/Human brain tissue/3_Xenium/1. Human_samples_analysis/Analysis/data/FINAL-TO-USE/megadata_metadata_md_v8.rds',
+        markers_csv =  'Z:/CembrowskiLab/Larissa/1. Projects/Human brain tissue/3_Xenium/1. Human_samples_analysis/Analysis/github_micro_test/micro_marker.csv',
+        output_dir_data = 'Z:/CembrowskiLab/Larissa/1. Projects/Human brain tissue/3_Xenium/1. Human_samples_analysis/Analysis/github_micro_test',
+        output_dir_plots = 'Z:/CembrowskiLab/Larissa/1. Projects/Human brain tissue/3_Xenium/1. Human_samples_analysis/Analysis/github_micro_test')
 if (is.na(cfg$output_dir_data)) stop("Set cfg$output_dir_data")
 dir.create(cfg$output_dir_data, recursive = TRUE, showWarnings = FALSE)
 if (is.na(cfg$output_dir_plots)) stop("Set cfg$output_dir_plots")
 dir.create(cfg$output_dir_plots, recursive = TRUE, showWarnings = FALSE)
 
-### 3) Color palettes -------------------------------------------------------
-
-ilae_levels <- c("P", "0", "1", "2", "3")
-pal_ILAE_score <- c("P" = "#C67BFF", "0" = "#F8766C", "1" = "#7BAD00", "2" = "#00C0C5", "3" = "#E69F00")
-pal_cluster_named <- c("Homeo" = "#ddcc77", "DIM" = "#117733", "BAM" = "#88ccee", 
-                       "DAM" = "#cc6677", "Inflam.DAM" = "#aa4499", "T-cells" = "#332288", 
-                       "PeriNeurM" = "#44aa99")
-cluster_key <- data.frame(id = c("0", "1", "3", "6", "5", "4", "2"), label = names(pal_cluster_named), colour = unname(pal_cluster_named))
-cluster_name_levels_noAll <- cluster_key$label
-cluster_name_levels <- c(cluster_name_levels_noAll, "All")
-box_colours <- c(pal_cluster_named, "All" = "white")
-
 dat <- load_if_missing("dat", cfg$megadata_rds, class = "Seurat")
 
 ### 4) Subset and annotate source microglia ---------------------------------
-# Load in MegaData_v8.rds and set the original cluster identities as the active Idents
 
+# Load in MegaData_v8_annotated_final.rds and set the original cluster identities as the active Idents
 Idents(dat) <- dat$seurat_clusters
 
 # View data: Plot UMAPs coloured by cluster number and by annotated cell type, side by side
@@ -107,7 +94,7 @@ dat_dimplot2 <- DimPlot(dat, shuffle = TRUE, group.by = 'celltype', label = TRUE
 dat_dimplot1 + dat_dimplot2
 
 # Sanity check that Cluster 2 is the microglia cluster: 
-c(Cluster2 = sum(dat$seurat_clusters == 2), Micro = sum(dat$celltype == "Micro")) #Cluster 2 contains the same number of cells as the "Micro" annotated cluster = 297,653 cells 
+c(Cluster2 = sum(dat$seurat_clusters == 2), Micro = sum(dat$celltype == "Micro")) 
 
 # Subset the full dataset down to just the microglia-annotated cluster (cluster 2)
 datM <- subset(dat, idents = 2)
@@ -136,8 +123,6 @@ all(rownames(dat_md_subset) == colnames(datM_clean))  # same cells, same order
 sum(is.na(dat_md_subset$region_md)) # cells with no region assigned
 
 ### 6) Normalize and integrate ----------------------------------------------
-# Set the default assay to the raw Xenium counts before normalizing
-DefaultAssay(datM_clean) <- 'Xenium'
 
 # Normalize with SCTransform
 datM_clean <- SCTransform(datM_clean, assay = "Xenium", min_cells = 0)
@@ -154,7 +139,7 @@ datM_clean <- IntegrateLayers(
         verbose = TRUE,
         normalization.method = "SCT")
 
-### 7) Parameter screening --------------------------------------------------
+### 7) Optional: Parameter screening --------------------------------------------------
 # Screen dimensions and resolutions using clustree plots.
 
 # Create a new folder in the working directory for the output of the following tests:
@@ -252,24 +237,26 @@ datM_clean <- datM_clean %>%
         FindClusters(resolution = 0.1) %>%
         RunUMAP(dims = 1:10, reduction = "harmony")
 
+DimPlot(datM_clean, shuffle = TRUE, label = TRUE) +
+        coord_fixed() + theme(legend.position = 'none')
+
 # Find cluster marker genes (SCT models were already prepared with prep_FindMarkers() above)
 markers <- FindAllMarkers(datM_clean,
                           only.pos = TRUE,
                           min.pct = 0.1,
                           logfc.threshold = 0.25)
 
-# Checkpoint: save the processed object so this pipeline doesn't need to be re-run from scratch if the R session crashes
-saveRDS(datM_clean, file.path(cfg$output_dir_data, "datM_clean_v8_unannotated.rds"))
 
 ### 9) Assign microglia states ----------------------------------------------
-# Microglia subcluster-specific colour palette and labels (shared across all microglia figures)
-# Cluster labels were assigned from marker heatmaps and refined using
-# HuMicA reference comparisons and perineuronal microglia analyses.
 
+datM_clean$cellstates <- dplyr::recode(as.character(datM_clean$seurat_clusters),
+                                           "0" = "Homeo",
+                                           "1" = "DIM",
+                                           "3" = "BAM",
+                                           "6" = "Inflam.DAM",
+                                           "5" = "T-cells",
+                                           "4" = "DAM",
+                                           "2" = "PeriNeurM")
 
-# Add the cluster name column to the metadata
-datM_clean$cluster_names <- factor(
-        cluster_key$label[match(as.character(datM_clean$seurat_clusters), cluster_key$id)],
-        levels = cluster_name_levels_noAll)
 write.csv(markers, cfg$markers_csv, row.names = FALSE)
 saveRDS(datM_clean, file.path(cfg$output_dir_data, "datM_clean_v8_annotated.rds"))
