@@ -3,11 +3,12 @@
 # 03_microglia_perineuronal_analysis.R
 #
 # Xenium analysis of microglia in human hippocampus samples
-# Using MegaData_v8
+# Perineuronal microglia analysis
+
+# Uses datM_clean_v8_annotated.rds generated in Script 01 and megaData_v8_annotated_final.rds
 # Original analysis: Rachel J. Boyd (2026)
 # Code cleanup and standardization: Larissa Kraus (October 2026)
 #
-# Perineuronal microglia analysis
 
 
 ### 0) Setup -------------------------------------------------------------------
@@ -25,7 +26,12 @@ suppressPackageStartupMessages({
 })
 
 ### PACKAGE CONFLICTS
-conflicted::conflicts_prefer(dplyr::filter, dplyr::select, dplyr::rename, dplyr::lag, dplyr::count, dplyr::first)
+conflicted::conflicts_prefer(dplyr::filter, 
+                             dplyr::select, 
+                             dplyr::rename, 
+                             dplyr::lag,
+                             dplyr::count, 
+                             dplyr::first)
 
 
 # Memory for large objects (adjust if needed)
@@ -61,28 +67,17 @@ ceiling_to_half <- function(x) ceiling(x * 2) / 2
 cfg <- list(
         megadata_rds = NA_character_,
         region_metadata_rds = NA_character_,
-        microglia_rds = NA_character_,
-        markers_csv = NA_character_,
-        humica_xlsx = NA_character_,
-        output_dir_data = NA_character_)
-if (is.na(cfg$output_dir_data)) stop("Set cfg$output_dir_data")
-dir.create(cfg$output_dir_data, recursive = TRUE, showWarnings = FALSE)
+        microglia_rds = NA_character_)
+
 datM_clean <- load_if_missing("datM_clean", cfg$microglia_rds, class = "Seurat")
-if (!"cluster_names" %in% colnames(datM_clean@meta.data)) stop("Annotated microglia object required (run Script 01).")
+if (!"cluster_names" %in% colnames(datM_clean@meta.data)) stop("Annotated microglia object required (run Script 01_microglia).")
 dat <- load_if_missing("dat", cfg$megadata_rds, class = "Seurat")
-if (!"cellsubtype" %in% colnames(dat@meta.data)) stop("Annotated cellsubtypes required (run Script 01_make_megasata_v8).")
+if (!"cellsubtype" %in% colnames(dat@meta.data)) stop("Annotated cellsubtypes required (run Script 01_make_megadata_v8).")
 
 ### 3) Color palettes -------------------------------------------------------
-ilae_levels <- c("P", "0", "1", "2", "3")
-pal_ILAE_score <- c("P" = "#C67BFF", "0" = "#F8766C", "1" = "#7BAD00", "2" = "#00C0C5", "3" = "#E69F00")
 pal_cluster_named <- c("Homeo" = "#ddcc77", "DIM" = "#117733", "BAM" = "#88ccee", 
                        "DAM" = "#cc6677", "Inflam.DAM" = "#aa4499", "T-cells" = "#332288", 
                        "PeriNeurM" = "#44aa99")
-cluster_key <- data.frame(id = c("0", "1", "3", "6", "5", "4", "2"), label = names(pal_cluster_named), colour = unname(pal_cluster_named))
-cluster_name_levels_noAll <- cluster_key$label
-cluster_name_levels <- c(cluster_name_levels_noAll, "All")
-box_colours <- c(pal_cluster_named, "All" = "white")
-
 
 
 ### 4) nCount and nfeature QC --------------------------------------------------
@@ -91,6 +86,7 @@ box_colours <- c(pal_cluster_named, "All" = "white")
 PeriNeurM_featplot <- VlnPlot(datM_clean, features = c("nCount_Xenium", "nFeature_Xenium"),
                               group.by = "cluster_names", pt.size = 0, cols = pal_cluster_named)
 PeriNeurM_featplot
+
 ### 5) Distance to Nearest Neuron --------------------------------------------
 
 # Pull cell coordinates + cell type for one representative FOV (sample D9), for a
@@ -159,6 +155,7 @@ scatter_grin1 <- FeatureScatter(datM_clean_D9, feature1 = "dist_to_nearest_neuro
 # Combine both scatter plots onto one page and save
 combined_scatter <- scatter_snap25 | scatter_grin1
 combined_scatter
+
 ### 6) Cropped Spatialplots with selected features -----------------------------
 
 # Make a metadata column that makes it easier to find PeriNeurM without changing 

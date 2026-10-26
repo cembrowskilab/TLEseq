@@ -95,40 +95,13 @@ plot_gene <- function(gene) {
 
 # Set input/output paths before running. Objects already in the session are reused.
 cfg <- list(
-        megadata_rds = NA_character_,
-        region_metadata_rds = NA_character_,
-        microglia_rds = NA_character_,
-        markers_csv = NA_character_,
-        humica_xlsx = NA_character_,
-        output_dir_data = NA_character_,
-        output_dir_plots = NA_character_)
-
-if (is.na(cfg$output_dir_data)) stop("Set cfg$output_dir_data")
-
-dir.create(cfg$output_dir_data, recursive = TRUE, showWarnings = FALSE)
-
-if (is.na(cfg$output_dir_plots)) stop("Set cfg$output_dir_plots")
-
-dir.create(cfg$output_dir_plots, recursive = TRUE, showWarnings = FALSE)
+        microglia_rds = NA_character_)
 
 ### 3) Color palettes -------------------------------------------------------
 
 ilae_levels <- c("P", "0", "1", "2", "3")
 
 pal_ILAE_score <- c("P" = "#C67BFF", "0" = "#F8766C", "1" = "#7BAD00", "2" = "#00C0C5", "3" = "#E69F00")
-
-pal_cluster_named <- c("Homeo" = "#ddcc77", "DIM" = "#117733", "BAM" = "#88ccee", 
-                       "DAM" = "#cc6677", "Inflam.DAM" = "#aa4499", "T-cells" = "#332288", 
-                       "PeriNeurM" = "#44aa99")
-
-cluster_key <- data.frame(id = c("0", "1", "3", "6", "5", "4", "2"), label = names(pal_cluster_named), colour = unname(pal_cluster_named))
-
-cluster_name_levels_noAll <- cluster_key$label
-
-cluster_name_levels <- c(cluster_name_levels_noAll, "All")
-
-box_colours <- c(pal_cluster_named, "All" = "white")
-
 
 datM_clean <- load_if_missing("datM_clean", cfg$microglia_rds, class = "Seurat")
 
@@ -144,6 +117,4 @@ Idents(pseudo_datM) <- "ILAE_score"
 # Plot the genes of interest side by side and save
 genes <- c("CCL4", "CD83", "P2RY12", "CX3CR1", "GPNMB", "APOE", "TREM2")
 
-ggsave(file.path(cfg$output_dir_plots, "Microglia_pseudobulk_boxplots.pdf"),
-       wrap_plots(lapply(genes, plot_gene), nrow = 1),
-       width = 1.8 * length(genes), height = 7)
+wrap_plots(lapply(genes, plot_gene), nrow = 1)
